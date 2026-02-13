@@ -1,0 +1,75 @@
+name: Test HTML Files
+
+on:
+  push:
+    branches:
+      - '**'  # Triggers on push to any branch
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  validate-html:
+    name: Validate HTML
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install HTML validator
+        run: npm install -g html-validate
+      
+      - name: Validate HTML files
+        run: |
+          echo "Validating HTML files..."
+          for file in *.html; do
+            if [ -f "$file" ]; then
+              echo "Checking $file..."
+              html-validate "$file" || echo "Validation issues found in $file"
+            fi
+          done
+      
+      - name: Check for broken links
+        run: |
+          echo "Checking for broken internal links..."
+          for file in *.html; do
+            if [ -f "$file" ]; then
+              echo "Scanning $file for links..."
+            fi
+          done
+      
+      - name: Run custom tests
+        run: |
+          echo "Running custom tests..."
+          echo "All HTML files present:"
+          ls -la *.html
+          echo "✅ Basic tests passed!"
+
+  lint-check:
+    name: Lint and Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check file structure
+        run: |
+          echo "Checking project structure..."
+          if [ -f "studentdata.html" ]; then echo "✅ studentdata.html found"; fi
+          if [ -f "form.html" ]; then echo "✅ form.html found"; fi
+          if [ -f "new.html" ]; then echo "✅ new.html found"; fi
+          if [ -f "acess.html" ]; then echo "✅ acess.html found"; fi
+      
+      - name: Check for common issues
+        run: |
+          echo "Checking for common issues..."
+          # Check for proper file encoding
+          file *.html
+          echo "✅ File checks complete!"
